@@ -1,6 +1,6 @@
 import numpy as np
 import random
-
+import sys
 
 # Abstract class for applying the Ant Colony Optimization strategy
 # to a given problem. Some assumptions are made, so the representation
@@ -17,8 +17,6 @@ class AntColonyOptimizer():
         # Substitution -> if we can repeat steps in our solutions (we can't in TSP, for example)
         self.substitution = substitution
 
-        self.visibility = 1/env.d 
-        self.visibility[self.visibility == np.inf] = 0
 
     # Finding a solution in a given number of iterations or if the used evaluation metric
     # does not improve in a given number of consecutive steps
@@ -57,7 +55,7 @@ class AntColonyOptimizer():
                     attractiveness_factor = np.power(attractiveness[current_location, :], self.beta)
                     product = np.multiply(pheromone_factor, attractiveness_factor)
                     total = np.sum(product)
-                    probabilities = product/total
+                    probabilities = np.divide(product, total)
 
                     # To choose the next step
                     cum_prob = np.cumsum(probabilities)

@@ -28,7 +28,7 @@ class TSP:
             for j in self.nodes:
                 l.append(sqrt((i[0] - j[0])**2 + (i[1] - j[1])**2))
             d.append(l)
-        self.d = np.array(d, dtype='float16')
+        self.d = np.array(d, dtype='float64')
 
     # The shape of the space of possible combinations for steps that
     # constitute valid solutions
@@ -54,7 +54,9 @@ class TSP:
     # Attractiveness of the possible steps
     # in the context of approaches like Ant Colony Optimization
     def attractiveness(self):
-        return 1/self.d
+        arr = np.divide(1, self.d)
+        arr[arr == np.inf] = 0
+        return arr
 
     # Returns the number of steps required to construct a solution
     def solution_steps(self):
@@ -68,9 +70,8 @@ class TSP:
     # Returns the distance of the path
     def evaluate(self, solution):
         distance = 0
-        for j in range(self.n_nodes):
+        for j in range(len(solution) - 1):
             distance += self.d[solution[j]][solution[j + 1]]
-        distance += self.d[solution[0]][solution[-1]]
 
         return distance
 
@@ -97,11 +98,13 @@ class TSP:
             for j in range(len(paths)):
                 path = paths[j]
                 for i in range(len(path) - 2):
-                    p0 = self.nodes[path[i]]
-                    p1 = self.nodes[path[i+1]]
-                    draw.line([p0[0]*window_width/self.width, p0[1]*window_height/self.height,
-                            p1[0]*window_width/self.width, p1[1]*window_height/self.height],
-                            fill=colors[j % len(colors)], width=2)
+                    p0 = self.nodes[path[i]] 
+                    p1 = self.nodes[path[i+1]] 
+                    draw.line([p0[0]*window_width/self.width - 3 * j, 
+                               p0[1]*window_height/self.height - 3 * j,
+                               p1[0]*window_width/self.width - 3 * j, 
+                               p1[1]*window_height/self.height - 3 * j],
+                               fill=colors[j % len(colors)], width=2)
 
         del draw
         return display(image)
